@@ -50,6 +50,16 @@
   <build_depend>tf2_eigen</build_depend>
   <build_depend>tf2_geometry_msgs</build_depend>
 
+  <!-- <depend>liborocos-kdl-dev</depend>
+  <depend>kdl_parser</depend> -->
+  <depend>kdl_conversions</depend>
+  <depend>manipulability_metrics</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <!-- <depend>tf2_ros</depend> -->
+  <depend>urdf</depend>
+  <depend>visualization_msgs</depend>
+
   <exec_depend>pluginlib</exec_depend>
   <exec_depend>moveit_core</exec_depend>
   <exec_depend>moveit_commander</exec_depend>

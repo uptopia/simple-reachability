@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(simple-reachability)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 find_package(Eigen3 REQUIRED)
 
@@ -29,7 +29,15 @@ find_package(catkin REQUIRED COMPONENTS
     tf2_eigen
     tf2_geometry_msgs
     roscpp
+    kdl_conversions
+    manipulability_metrics
+    roscpp
+    sensor_msgs
+    tf2_ros
+    urdf
+    visualization_msgs
 )
+catkin_package()
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system filesystem date_time thread)
@@ -143,6 +151,7 @@ catkin_package(
 include_directories(
         # include
         ${catkin_INCLUDE_DIRS}
+        ${manipulability_metrics}
 )
 
 ## Declare a C++ library
@@ -160,6 +169,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(calculate_workspace src/calculate_workspace.cpp)
 add_executable(visualize_workspace src/visualize_workspace.cpp)
+add_executable(calculate_manipulability src/calculate_manipulability.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -180,7 +190,14 @@ target_link_libraries(
 target_link_libraries(
         calculate_workspace
         ${catkin_LIBRARIES}
-)
+        )
+
+target_link_libraries(
+        calculate_manipulability
+        ${catkin_LIBRARIES}
+        ${manipulability_metrics} 
+        )
+
 
 #############
 ## Install ##
