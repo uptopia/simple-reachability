@@ -1,4 +1,18 @@
 <launch>
+    <!-- Initiate Robot UR5e -->
+    <!-- <arg name="sim"          default="true" />
+    <arg name="robot_name"   default="ur5e" />
+    <arg name="group_name"   default="manipulator"/>
+    <arg name="base_frame"   default="base_link"/>
+
+    <group if="$(eval robot_name == 'ur5e')">
+        <include file="$(find ur_gazebo)/launch/ur5e_bringup.launch" />
+        <include file="$(find ur5e_new_moveit_config)/launch/moveit_planning_execution.launch">
+            <arg name="sim" default="$(arg sim)" />
+        </include>
+        <include file="$(find ur5e_new_moveit_config)/launch/moveit_rviz.launch"/>
+    </group> -->
+
 
   <!-- <arg name="model" default="$(find ur_description)/urdf/ur.urdf.xacro name:=ur5" /> -->
   <arg name="model" default="$(find ur_description)/urdf/ur5e.xacro" />

@@ -15,6 +15,7 @@
 #include <manipulability_metrics/kinematics/chain.h>
 #include <manipulability_metrics/metrics/inverse_condition_number.h>
 #include <manipulability_metrics/metrics/manipulability_measure.h>
+#include <manipulability_metrics/metrics/m_score_measure.h>
 #include <manipulability_metrics/metrics/minimum_singular_value.h>
 // #include <manipulability_metrics/metrics/tomm.h>
 #include <manipulability_metrics/util/ellipsoid.h>
@@ -64,7 +65,6 @@ std_msgs::ColorRGBA mapColor(double v)
         return color;
     }
 
-    
     double dv;
     
     if (v < vmin)
@@ -431,11 +431,14 @@ int main(int argc, char **argv) {
                
                 const auto jnt_array = utils::extractJoints(last_position, joint_permutation);
 
-                const auto icn = manipulability_metrics::inverseConditionNumber(chain, jnt_array);
-                const auto mm = manipulability_metrics::manipulabilityMeasure(chain, jnt_array);
-                const auto msv = manipulability_metrics::minimumSingularValue(chain, jnt_array);
-                ROS_INFO_STREAM("Got an updated joint state. Computed metrics:\nInverse Condition Number: "
-                    << icn << "\nManipulability Measure: " << mm << "\nMinimum Singular Value: " << msv);
+                const auto icn    = manipulability_metrics::inverseConditionNumber(chain, jnt_array);
+                const auto mm     = manipulability_metrics::manipulabilityMeasure(chain, jnt_array);
+                const auto msv    = manipulability_metrics::minimumSingularValue(chain, jnt_array);
+                const auto mscore = manipulability_metrics::mScoreMeasure(jnt_array);
+                ROS_INFO_STREAM("Got an updated joint state. Computed metrics:\nInverse Condition Number: " << icn \
+                    << "\nManipulability Measure: " << mm \
+                    << "\nMinimum Singular Value: " << msv \
+                    << "\nM Score Value:          " << mscore);
 
                 manip_val_list.push_back(mm);
 
