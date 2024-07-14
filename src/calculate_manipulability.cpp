@@ -17,19 +17,9 @@
 #include <manipulability_metrics/metrics/manipulability_measure.h>
 #include <manipulability_metrics/metrics/m_score_measure.h>
 #include <manipulability_metrics/metrics/minimum_singular_value.h>
-// #include <manipulability_metrics/metrics/tomm.h>
 #include <manipulability_metrics/util/ellipsoid.h>
-// #include <manipulability_metrics/util/markers.h>
 
 #include "demo_utils.h"
-
-// // #include <sensor_msgs/JointState.h>
-// // #include <visualization_msgs/MarkerArray.h>
-
-// // #include <ros/ros.h>
-
-
-
 
 using namespace std;
 
@@ -154,7 +144,7 @@ int main(int argc, char **argv) {
         ROS_INFO_STREAM(
                 "Param \"planning group\" not provided. simple_reachability will use default planning group \"manipulator\".");
     }
-
+    
     // Load the base_link parameter from the configuration
     std::string base_link;
     node_handle.param<std::string>("manipulator_base_link", base_link, "base_link");
@@ -348,9 +338,16 @@ int main(int argc, char **argv) {
     ros::Duration elapsed = ros::Time::now() - begin;
 
     // Load parameters for manipulability calculation
-    std::string root_link, tip_link;
+    std::string root_link, tip_link, csv_filename;
     node_handle.param<std::string>("root_link", root_link, "base_link");
     node_handle.param<std::string>("tip_link",  tip_link,  "wrist_3_link");
+    node_handle.param<std::string>("csv_filename", csv_filename, "tmp_manip.csv");
+
+    std::ofstream csv_file(path + "/bags/" + csv_filename, ios::app); //add data without clean up
+    if(csv_file.is_open())
+        cout << "csv_file opened!" <<endl;
+    else
+        cout << "failed to open csv_file " <<endl;
 
     auto model = urdf::Model{};
     model.initParamWithNodeHandle("robot_description", node_handle);
@@ -399,22 +396,22 @@ int main(int argc, char **argv) {
             geometry_msgs::Point target;
             target = target_pose.position;
 
+            // Visualizing plans
+            // ^^^^^^^^^^^^^^^^^
+            // We can also visualize the plan as a line with markers in RViz.
+            ROS_INFO_NAMED("tutorial", "Visualizing plan 1 as trajectory line");
+            visual_tools.publishAxisLabeled(target_pose, "pose1");
+            visual_tools.publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
+
             points.points.push_back(target); // Pushed pose to the output data structure (marker list)
             if (success) {
                 ROS_INFO_STREAM("Solution found"); // ROS_DEBUG
                 // points.colors.push_back(green); //Plan found
                 //            move_group.move();
 
-                // Visualizing plans
-                // ^^^^^^^^^^^^^^^^^
-                // We can also visualize the plan as a line with markers in RViz.
-                ROS_INFO_NAMED("tutorial", "Visualizing plan 1 as trajectory line");
-                visual_tools.publishAxisLabeled(target_pose, "pose1");
-                visual_tools.publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
                 visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
                 // visual_tools.publishTrajectoryPath(my_plan.trajectory_, my_plan.start_state_);
-                visual_tools.trigger();
-                ros::Duration(0.5).sleep();
+
                 std::vector<int>::size_type size1 = my_plan.trajectory_.joint_trajectory.points.size();
                 std::vector<int>::size_type size2 = my_plan.trajectory_.joint_trajectory.points[0].positions.size();
                 // int size1 = static_cast<int>(my_plan.trajectory_.joint_trajectory.points.size());
@@ -428,6 +425,7 @@ int main(int argc, char **argv) {
                     cout << my_plan.trajectory_.joint_trajectory.points[size1-1].positions[cnt]<<endl;
 
                 auto last_position = my_plan.trajectory_.joint_trajectory.points[size1-1].positions;
+                // auto last_orientation = my_plan.trajectory_.joint_trajectory.points[size1-1].orientation;
                
                 const auto jnt_array = utils::extractJoints(last_position, joint_permutation);
 
@@ -442,26 +440,33 @@ int main(int argc, char **argv) {
 
                 manip_val_list.push_back(mm);
 
-                // std::vector<int>::iterator it;
-                // cout <<"target_pose.position:", target_pose.position<<endl;
-                // for(it=points.points.begin();it!=points.points.end();it++)
-                //     cout <<*it->points<<endl;
+                // Save to CSV
+                // ^^^^^^^^^^^^^^^^^
+                cout << target_pose.position.x <<", " << target_pose.position.y <<", " << target_pose.position.z <<", " \
+                     << target_pose.orientation.x <<", " << target_pose.orientation.y <<", " << target_pose.orientation.z <<", " << target_pose.orientation.w \
+                     << jnt_array(0) <<", "<< jnt_array(1) <<", "<< jnt_array(2) <<", "<< jnt_array(3) <<", "<< jnt_array(4) <<", "<< jnt_array(5) \      
+                     << icn <<", " << mm <<", " << msv <<", " << mscore << endl;
+                cout << last_position[0] <<", " << last_position[1] <<", " << last_position[2] <<", " \
+                     << icn <<", " << mm <<", " << msv <<", " << mscore << endl;
+                //  << last_orientation.x() <<", " << last_orientation.y() <<", " << last_orientation.z() <<", " << last_orientation.w() \
 
-                // cout <<"points.points.size():" <<points.points.size() <<endl;
-                // for(int cnt=0; cnt< manip_val_list.size(); cnt++)
-                //     cout <<manip_val_list[cnt]<<endl;
+                csv_file << step_counter <<", " \
+                         << last_position[0] <<", " << last_position[1] <<", " << last_position[2] <<", " \
+                         << jnt_array(0) <<", "<< jnt_array(1) <<", "<< jnt_array(2) <<", "<< jnt_array(3) <<", "<< jnt_array(4) <<", "<< jnt_array(5) <<", " \
+                         << icn <<", " << mm <<", " << msv <<", " << mscore << endl;
+                // csv_file << last_position.position.x() <<", " << last_position.position.y() <<", " << last_position.position.z() <<", " \
+                //          << last_position.orientation.x() <<", " << last_position.orientation.y() <<", " << last_position.orientation.z() <<", " << last_position.orientation.w() \
+                //          << icn <<", " << mm <<", " << msv <<", " << mscore << endl;
 
-                // auto minmax = minmax_element(manip_val_list.begin(), manip_val_list.end());
-                // cout << "\npair_min = " << *minmax.first
-                //     << ", pair_max = " << *minmax.second << '\n';
-   
                 // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
             } 
             else {
-                manip_val_list.push_back(-1.0);
-                // points.colors.push_back(red); //If no plan is found MoveIt! will provide a warning in ROS_WARN
+                manip_val_list.push_back(-1.0);  //If no plan is found MoveIt! will provide a warning in ROS_WARN
+                csv_file << step_counter << endl;
             }
             step_counter++;
+            visual_tools.trigger();
+            ros::Duration(0.5).sleep();
             ROS_INFO_STREAM("Completed " << step_counter << " of " << steps);
 
             elapsed += ros::Time::now() - begin;
@@ -489,8 +494,8 @@ int main(int argc, char **argv) {
         points.colors.push_back(mapColor(manip_val_list[cnt]));
     }
     cout <<"points.points.size()="<<points.points.size()<<endl;
-    cout <<"points.colors.size()="<<points.colors.size()<<endl;
-
+    cout <<"points.colors.size()="<<points.colors.size()<<endl;                
+   
     saveROSBag(true); // Save complete result and delete .partial
     ros::shutdown();
     return 0;

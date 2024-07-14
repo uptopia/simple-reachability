@@ -10,6 +10,7 @@ resolution: 0.5 #0.35 resolution of the calculated workspace in meters
 scale: 0 # 0 means automatic scaling, otherwise the given value will be used
 publish_rate: 1 # rate in Hz in which the workspace points will be published
 file_name: "manip_ur5.bag" # you could provide a file name with suffix .bag (like test.bag) for the generated workspace
+csv_filename: "manip_ur5.csv"
 continue_calculation: true # the node will look if there is a file with the same filename and .partial and will continue the calculation, make sure to provide the same config values here before starting the continuation!
 
 # Optional: You can provide a fixed end-effector orientation (as quaternion), to ignore the orientation, comment this parameters, moveit will use identity as orientation
