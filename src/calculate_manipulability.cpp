@@ -348,6 +348,7 @@ int main(int argc, char **argv) {
         cout << "csv_file opened!" <<endl;
     else
         cout << "failed to open csv_file " <<endl;
+    csv_file <<"idx,x,y,z,j1,j2,j3,j4,j5,j6,icn,mm,msv,mscore"<<endl; //csv dict
 
     auto model = urdf::Model{};
     model.initParamWithNodeHandle("robot_description", node_handle);
@@ -449,11 +450,11 @@ int main(int argc, char **argv) {
                 cout << last_position[0] <<", " << last_position[1] <<", " << last_position[2] <<", " \
                      << icn <<", " << mm <<", " << msv <<", " << mscore << endl;
                 //  << last_orientation.x() <<", " << last_orientation.y() <<", " << last_orientation.z() <<", " << last_orientation.w() \
-
-                csv_file << step_counter <<", " \
-                         << last_position[0] <<", " << last_position[1] <<", " << last_position[2] <<", " \
-                         << jnt_array(0) <<", "<< jnt_array(1) <<", "<< jnt_array(2) <<", "<< jnt_array(3) <<", "<< jnt_array(4) <<", "<< jnt_array(5) <<", " \
-                         << icn <<", " << mm <<", " << msv <<", " << mscore << endl;
+                
+                csv_file << step_counter <<"," \
+                         << last_position[0] <<"," << last_position[1] <<"," << last_position[2] <<"," \
+                         << jnt_array(0) <<","<< jnt_array(1) <<","<< jnt_array(2) <<","<< jnt_array(3) <<","<< jnt_array(4) <<","<< jnt_array(5) <<"," \
+                         << icn <<"," << mm <<"," << msv <<"," << mscore << endl;
                 // csv_file << last_position.position.x() <<", " << last_position.position.y() <<", " << last_position.position.z() <<", " \
                 //          << last_position.orientation.x() <<", " << last_position.orientation.y() <<", " << last_position.orientation.z() <<", " << last_position.orientation.w() \
                 //          << icn <<", " << mm <<", " << msv <<", " << mscore << endl;
