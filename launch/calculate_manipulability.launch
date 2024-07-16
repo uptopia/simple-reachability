@@ -41,6 +41,9 @@
   </node> -->
 
 
+  <!-- Open rviz with predefined settings -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find simple-reachability)/config/moveit_traj.rviz" required="true" />
+
   <node name="calculate_manipulability" pkg="simple-reachability" type="calculate_manipulability" output="screen">
     <rosparam command="load" file="$(find simple-reachability)/config/manip_calculation.yaml"/>
     <param name="root_link" value="$(arg root_link)" />

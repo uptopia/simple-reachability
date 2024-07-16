@@ -23,7 +23,7 @@ with open(csv_path, newline='') as csvfile:
     
     for row in reader:
         # idx,x,y,z,j1,j2,j3,j4,j5,j6,row
-
+        # print(row)
         idx_list.append(row['idx'])
 
         if row['icn']!=None:
@@ -52,13 +52,13 @@ with open(csv_path, newline='') as csvfile:
 # Minimum Singular Value (msv)
 # M Score Value          (mscore)
             
-# plt.plot(idx_list, icn_list,   '-*', linewidth=1, markersize=5, color='#4971A6')#r')   # red line without marker
-# plt.plot(idx_list, mm_list,    '--+', color='#4971A6')#'k--+')   # black dashed line, with "+" markers
-# plt.plot(idx_list, msv_list,   ':+', color='#4971A6')#'b-o')     # blue solid line with filled circle marker
-# plt.plot(idx_list, mscore_list,'-+', color='#4971A6')#'r:')     # red dotted line (no marker)
-# # plt.plot(x, y, 'gd') # green dimonds (no line)
-# plt.legend(['Inverse Condition Number (icn)','Manipulability Measure (mm)','Minimum Singular Value (msv)','M Score Value (mscore)'])
-# plt.show()                
+plt.plot(idx_list, icn_list,   '-*', linewidth=1, markersize=5, color='#4971A6')#r')   # red line without marker
+plt.plot(idx_list, mm_list,    '--+', color='#D97652')#'k--+')   # black dashed line, with "+" markers
+plt.plot(idx_list, msv_list,   ':+', color='#4D5950')#'b-o')     # blue solid line with filled circle marker
+plt.plot(idx_list, mscore_list,'-+', color='#56A662')#'r:')     # red dotted line (no marker)
+# plt.plot(x, y, 'gd') # green dimonds (no line)
+plt.legend(['Inverse Condition Number (icn)','Manipulability Measure (mm)','Minimum Singular Value (msv)','M Score Value (mscore)'])
+plt.show()                
             
 # # print(mcolors.CSS4_COLORS['lightcoral'])
 

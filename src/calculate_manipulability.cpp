@@ -430,6 +430,13 @@ int main(int argc, char **argv) {
                
                 const auto jnt_array = utils::extractJoints(last_position, joint_permutation);
 
+                //========================//
+                // Joint Values in radian
+                //========================//
+                float tot_joint_num = jnt_array.rows();
+                for(int cnt=0; cnt<tot_joint_num; cnt++)
+                    cout << "Joint #"<< cnt << ": " << jnt_array(cnt) <<"; "<< jnt_array(cnt)*360.0/M_PI<< endl;
+
                 const auto icn    = manipulability_metrics::inverseConditionNumber(chain, jnt_array);
                 const auto mm     = manipulability_metrics::manipulabilityMeasure(chain, jnt_array);
                 const auto msv    = manipulability_metrics::minimumSingularValue(chain, jnt_array);
